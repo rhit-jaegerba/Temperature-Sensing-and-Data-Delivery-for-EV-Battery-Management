@@ -1,81 +1,86 @@
 #include <Wire.h>
+const uint8_t NUMBER_OF_MODULES = 3;
+#define uint16_t moduleMaxTemperature[NUMBER_OF_MODULES];
+#define uint16_t moduleAvgTemperature[NUMBER_OF_MODULES];
+#define uint16_t moduleMinTemperature[NUMBER_OF_MODULES];
 
-#include <SparkFun_I2C_Mux_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#SparkFun_I2C_Mux
-QWIICMUX myMux;
+//TCA9548A I2C Mux
+#include <SparkFun_I2C_Mux_Arduino_Library.h>  //Click here to get the library: http://librarymanager/All#SparkFun_I2C_Mux
+QWIICMUX mux;
+const uint8_t MUX_ADDRESS = 0x70;
+const uint8_t NUMBER_OF_MUX_PORTS = 8;
 
-#define TMP102_ADDRESS_1 0x49
 
+
+//TMP112 temperature sensor
+const uint8_t TMP_ADDRESSES[4] = { 0x48, 0x49, 0x4A, 0x4B };
+const uint8_t NUMBER_OF_TMP_ADDRESSES = 4;
 #define TEMPERATURE_REGISTER 0x00
 #define CONFIG_REGISTER 0x01
 #define T_LOW_REGISTER 0x02
 #define T_HIGH_REGISTER 0x03
-#define ALERT_PIN A3
+
+
+
+//Sensors connected to the system
+//presentSensors(Mux port 0-7, TMP_ADDRESSES 0-3)
+//0-Not Connected
+//x>0-Module number
+const uint connectedSensors[8][4] = {
+  { 1, 0, 0, 0 },
+  { 0, 0, 0, 0 },
+  { 0, 0, 0, 0 },
+  { 0, 0, 0, 0 },
+  { 0, 0, 0, 0 },
+  { 0, 0, 0, 0 },
+  { 0, 0, 0, 0 },
+  { 0, 0, 0, 0 }
+};
+uint16_t sensorValues[8][4];
+
+
 
 void setup() {
   Serial.begin(9600);
   Wire.begin();
 
-
-  if (myMux.begin() == false)
-  {
+  if (mux.begin(MUX_ADDRESS) == false) {
     Serial.println("Mux not detected. Freezing...");
     while (1)
       ;
   }
   Serial.println("Mux detected");
 
-  myMux.setPort(0); //Connect master to port labeled '1' on the mux
-
-
-  pinMode(ALERT_PIN, INPUT);
-
-  // Initialize sensors
-  if (!initializeTMP102(TMP102_ADDRESS_1)) {
-    Serial.println("Cannot connect to " + String(TMP102_ADDRESS_1) + ". Check wiring and addresses.");
-    while (1);
-  }
-  myMux.setPort(1);
-  // Configure both sensors
-  configureSensor(TMP102_ADDRESS_1);
-
-  if (!initializeTMP102(TMP102_ADDRESS_1)) {
-  Serial.println("Cannot connect to " + String(TMP102_ADDRESS_1) + ". Check wiring and addresses.");
-  while (1);
+  for (int i = 0; i < NUMBER_OF_MUX_PORTS; i++) {
+    mux.setPort(i);
+    for (int j = 0; j < NUMBER_OF_TMP_ADDRESSES; j++) {
+      sensorValues[i][j] = 0; //Initalize array;
+      if (connectedSensors[i][j]>0) {
+        configureSensor(TMP_ADDRESSES[j]);
+        if (!initializeTMP112(TMP_ADDRESSES[j])) {
+        Serial.println("Cannot connect to mux port: "+ String(i) + " Address: " + String(TMP_ADDRESSES[j]));
+        while (1);
+        }
+      }
+    }
   }
 
-  // Configure both sensors
-  configureSensor(TMP102_ADDRESS_1);
 }
-unsigned long previousMillis = 0;
+
 void loop() {
-  myMux.setPort(0);
-  float P1temperatureC1 = readTempC(TMP102_ADDRESS_1);
-  float P1temperatureF1 = P1temperatureC1 * 9.0 / 5.0 + 32.0;
-  myMux.setPort(1);
-  float P2temperatureC1 = readTempC(TMP102_ADDRESS_1);
-  float P2temperatureF1 = P2temperatureC1 * 9.0 / 5.0 + 32.0;
-  /*
-  unsigned long currentMillis = millis();  // Capture the current time at the start of the loop
-
-  // Calculate the time taken for the previous loop cycle
-  unsigned long cycleTime = currentMillis - previousMillis;
-
-  // Print the cycle time
-  Serial.print("Cycle time: ");
-  Serial.print(cycleTime);
-  Serial.println(" ms");
-
-  // Update previousMillis to the current time for the next loop cycle
-  previousMillis = currentMillis;
-  */
-  Serial.print("P1:");
-  Serial.print(P1temperatureF1);
-  Serial.print("    P2:");
-  Serial.println(P2temperatureF1);
-  delay(250);
+  // collect sensor values
+  for (int i = 0; i < NUMBER_OF_MUX_PORTS; i++) {
+    mux.setPort(i);
+    for (int j = 0; j < NUMBER_OF_TMP_ADDRESSES; j++) {
+      if (connectedSensors[i][j]>0) {
+        sensorValues[i][j] = readTempC(TMP_ADDRESSES[j]);
+      }
+    }
+  }
+  //Process Data
 }
 
-bool initializeTMP102(uint8_t address) {
+bool initializeTMP112(uint8_t address) {
   Wire.beginTransmission(address);
   return Wire.endTransmission() == 0;
 }
@@ -179,4 +184,3 @@ void writeConfigRegister(uint8_t address, uint16_t config) {
   Wire.write(config >> 8);
   Wire.write(config & 0xFF);
   Wire.endTransmission();
-}
