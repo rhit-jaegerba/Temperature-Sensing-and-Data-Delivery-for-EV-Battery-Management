@@ -1,12 +1,14 @@
 #include <Wire.h>
+
 const uint8_t NUMBER_OF_MODULES = 3;
-#define uint16_t moduleMaxTemperature[NUMBER_OF_MODULES];
-#define uint16_t moduleAvgTemperature[NUMBER_OF_MODULES];
-#define uint16_t moduleMinTemperature[NUMBER_OF_MODULES];
+uint16_t moduleMaxTemperature[NUMBER_OF_MODULES];
+uint16_t moduleAvgTemperature[NUMBER_OF_MODULES];
+uint16_t moduleMinTemperature[NUMBER_OF_MODULES];
 
 //TCA9548A I2C Mux
 #include <SparkFun_I2C_Mux_Arduino_Library.h>  //Click here to get the library: http://librarymanager/All#SparkFun_I2C_Mux
 QWIICMUX mux;
+
 const uint8_t MUX_ADDRESS = 0x70;
 const uint8_t NUMBER_OF_MUX_PORTS = 8;
 
@@ -26,7 +28,7 @@ const uint8_t NUMBER_OF_TMP_ADDRESSES = 4;
 //presentSensors(Mux port 0-7, TMP_ADDRESSES 0-3)
 //0-Not Connected
 //x>0-Module number
-const uint connectedSensors[8][4] = {
+const uint8_t connectedSensors[8][4] = {
   { 1, 0, 0, 0 },
   { 0, 0, 0, 0 },
   { 0, 0, 0, 0 },
@@ -64,7 +66,6 @@ void setup() {
       }
     }
   }
-
 }
 
 void loop() {
@@ -184,3 +185,4 @@ void writeConfigRegister(uint8_t address, uint16_t config) {
   Wire.write(config >> 8);
   Wire.write(config & 0xFF);
   Wire.endTransmission();
+}
