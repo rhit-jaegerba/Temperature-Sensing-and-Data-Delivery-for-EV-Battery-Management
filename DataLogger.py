@@ -12,6 +12,7 @@ outputFilePath = os.path.join(
     os.path.dirname(__file__),
     datetime.datetime.now().strftime("%Y-%m-%dT%H.%M.%S") + ".csv"
 )
+outputFilePath = '/media/pi/DATAFLASH/data.csv'
 
 with serial.Serial(args.device, args.speed, timeout=1) as ser, open(outputFilePath, mode='w') as outputFile:
     print("Logging started. Ctrl-C to stop.")
@@ -29,6 +30,7 @@ with serial.Serial(args.device, args.speed, timeout=1) as ser, open(outputFilePa
                     date_str = timestamp.strftime("%Y-%m-%d")
                     time_str = timestamp.strftime("%H:%M:%S.%f")[:-3]  # Millisecond precision
                     csv_entry = f"{date_str},{time_str},{line.strip()}\n"
+                    print(csv_entry)
                     outputFile.write(csv_entry)
                     outputFile.flush()
     except KeyboardInterrupt:

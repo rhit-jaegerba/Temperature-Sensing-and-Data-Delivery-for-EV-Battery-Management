@@ -1,88 +1,84 @@
 #include <Wire.h>
 
-const uint8_t NUMBER_OF_MODULES = 3;
-uint16_t moduleMaxTemperature[NUMBER_OF_MODULES];
-uint16_t moduleAvgTemperature[NUMBER_OF_MODULES];
-uint16_t moduleMinTemperature[NUMBER_OF_MODULES];
-const uint8_t WINDOW_SIZE = 8; 
-uint8_t windowIndex = 0;
-//TCA9548A I2C Mux
-#include <SparkFun_I2C_Mux_Arduino_Library.h>  //Click here to get the library: http://librarymanager/All#SparkFun_I2C_Mux
-QWIICMUX mux;
-
-const uint8_t MUX_ADDRESS = 0x70;
-const uint8_t NUMBER_OF_MUX_PORTS = 8;
-
-
-
-//TMP112 temperature sensor
-const uint8_t TMP_ADDRESSES[4] = { 0x48, 0x49, 0x4A, 0x4B };
-const uint8_t NUMBER_OF_TMP_ADDRESSES = 4;
+#define TMP102_ADDRESS_1 0x48
+#define TMP102_ADDRESS_2 0x49
+#define TMP102_ADDRESS_3 0x4A
+#define TMP102_ADDRESS_4 0x4B
 #define TEMPERATURE_REGISTER 0x00
 #define CONFIG_REGISTER 0x01
 #define T_LOW_REGISTER 0x02
 #define T_HIGH_REGISTER 0x03
-
-
-
-//Sensors connected to the system
-//presentSensors(Mux port 0-7, TMP_ADDRESSES 0-3)
-//0-Not Connected
-//x>0-Module number
-const uint8_t connectedSensors[8][4] = {
-  { 1, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 }
-};
-uint16_t sensorValues[8][4][WINDOW_SIZE] = {0};
-
-
+#define ALERT_PIN A3
 
 void setup() {
   Serial.begin(9600);
   Wire.begin();
+  pinMode(ALERT_PIN, INPUT);
 
-  if (mux.begin(MUX_ADDRESS) == false) {
-    Serial.println("Mux not detected. Freezing...");
-    while (1)
-      ;
+  // Initialize sensors
+  if (!initializeTMP102(TMP102_ADDRESS_1)) {
+    Serial.println("Cannot connect to " + String(TMP102_ADDRESS_1) + ". Check wiring and addresses.");
+    while (1);
   }
-  Serial.println("Mux detected");
-
-  for (int i = 0; i < NUMBER_OF_MUX_PORTS; i++) {
-    mux.setPort(i);
-    for (int j = 0; j < NUMBER_OF_TMP_ADDRESSES; j++) {
-      //sensorValues[i][j][0] = 0; //Initalize array;
-      if (connectedSensors[i][j]>0) {
-        configureSensor(TMP_ADDRESSES[j]);
-        if (!initializeTMP112(TMP_ADDRESSES[j])) {
-        Serial.println("Cannot connect to mux port: "+ String(i) + " Address: " + String(TMP_ADDRESSES[j]));
-        while (1);
-        }
-      }
-    }
+  if (!initializeTMP102(TMP102_ADDRESS_2)) {
+    Serial.println("Cannot connect to " + String(TMP102_ADDRESS_2) + ". Check wiring and addresses.");
+    while (1);
   }
+  // if (!initializeTMP102(TMP102_ADDRESS_3)) {
+  //   Serial.println("Cannot connect to " + String(TMP102_ADDRESS_3) + ". Check wiring and addresses.");
+  //   while (1);
+  // }
+  // if (!initializeTMP102(TMP102_ADDRESS_4)) {
+  //   Serial.println("Cannot connect to " + String(TMP102_ADDRESS_4) + ". Check wiring and addresses.");
+  //   while (1);
+  // }
+  // Configure both sensors
+  configureSensor(TMP102_ADDRESS_1);
+  configureSensor(TMP102_ADDRESS_2);
+  // configureSensor(TMP102_ADDRESS_3);
+  // configureSensor(TMP102_ADDRESS_4);
 }
-
+unsigned long previousMillis = 0;
 void loop() {
-  // collect sensor values
-  for (int i = 0; i < NUMBER_OF_MUX_PORTS; i++) {
-    mux.setPort(i);
-    for (int j = 0; j < NUMBER_OF_TMP_ADDRESSES; j++) {
-      if (connectedSensors[i][j]>0) {
-        sensorValues[i][j] = readTempC(TMP_ADDRESSES[j]);
-      }
-    }
-  }
-  //Process Data
+  float temperatureC1 = readTempC(TMP102_ADDRESS_1);
+  float temperatureF1 = temperatureC1 * 9.0 / 5.0 + 32.0;
+  
+  float temperatureC2 = readTempC(TMP102_ADDRESS_2);
+  float temperatureF2 = temperatureC2 * 9.0 / 5.0 + 32.0;
+  
+  float temperatureC3 = readTempC(TMP102_ADDRESS_3);
+  float temperatureF3 = temperatureC3 * 9.0 / 5.0 + 32.0;
+  
+  float temperatureC4 = readTempC(TMP102_ADDRESS_4);
+  float temperatureF4 = temperatureC4 * 9.0 / 5.0 + 32.0;
+
+  /*
+  unsigned long currentMillis = millis();  // Capture the current time at the start of the loop
+
+  // Calculate the time taken for the previous loop cycle
+  unsigned long cycleTime = currentMillis - previousMillis;
+
+  // Print the cycle time
+  Serial.print("Cycle time: ");
+  Serial.print(cycleTime);
+  Serial.println(" ms");
+
+  // Update previousMillis to the current time for the next loop cycle
+  previousMillis = currentMillis;
+  */
+  //Serial.print("1:");
+  Serial.print(temperatureF1);
+  Serial.print(",");
+  Serial.println(temperatureF2);
+  // Serial.print("  3:");
+  // Serial.print(temperatureF3);
+  // Serial.print("  4:");
+  // Serial.println(temperatureF4);
+  
+  delay(100);
 }
 
-bool initializeTMP112(uint8_t address) {
+bool initializeTMP102(uint8_t address) {
   Wire.beginTransmission(address);
   return Wire.endTransmission() == 0;
 }

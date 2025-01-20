@@ -30,19 +30,20 @@ void setup() {
 }
 
 void loop() {
+  Serial.print("Test");
   temperatureC = readTempC();
   float temperatureF = temperatureC * 9.0 / 5.0 + 32.0;
   
-  // Serial.print("Temperature: ");
-  // Serial.print(temperatureC);
-  // Serial.println("°C / ");
-  //Serial.print(temperatureF);
-  //Serial.println("°F");
+  Serial.print("Temperature: ");
+  Serial.print(temperatureC);
+  Serial.print("°C / ");
+  Serial.print(temperatureF);
+  Serial.println("°F");
 
   int alertPinState = digitalRead(ALERT_PIN);
   //Serial.print("\tAlert Pin State: ");
   //Serial.println(alertPinState);
-  delay(10);
+  delay(250);
 }
 
 // Function to handle data received from the I2C master
