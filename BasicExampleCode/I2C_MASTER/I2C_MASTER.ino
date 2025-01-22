@@ -28,11 +28,11 @@ void loop() {
   // Check if the device has sent any data back
   if (Wire.available()) {
     byte receivedData = Wire.read();   // Read the byte sent back from the slave
-    Serial.print("Received response: 0x");
-    Serial.println(receivedData, HEX); // Print the received data in hexadecimal format
+    Serial.print("Received response:");
+    Serial.println(receivedData); // Print the received data in hexadecimal format
   } else {
     Serial.println("No response received.");
   }
 
-  delay(250); // Delay between transmissions for testing
+  delay(50); // Delay between transmissions for testing
 }

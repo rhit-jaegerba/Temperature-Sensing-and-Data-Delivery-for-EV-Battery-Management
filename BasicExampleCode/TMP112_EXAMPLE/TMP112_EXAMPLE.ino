@@ -24,15 +24,15 @@ void loop() {
   float temperatureC = readTempC();
   float temperatureF = temperatureC * 9.0 / 5.0 + 32.0;
   
-  Serial.print("Temperature: ");
-  Serial.print(temperatureC);
-  Serial.print("°C / ");
-  Serial.print(temperatureF);
-  Serial.print("°F");
+  //Serial.print("Temperature: ");
+  //Serial.print(temperatureC);
+  //Serial.print("°C / ");
+  Serial.println(temperatureF);
+  //Serial.print("°F");
 
   int alertPinState = digitalRead(ALERT_PIN);
-  Serial.print("\tAlert Pin State: ");
-  Serial.println(alertPinState);
+  //Serial.print("\tAlert Pin State: ");
+  //Serial.println(alertPinState);
 
   delay(100);
 }
