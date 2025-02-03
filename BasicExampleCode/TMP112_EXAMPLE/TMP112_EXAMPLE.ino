@@ -44,7 +44,7 @@ bool initializeTMP102() {
 
 void configureSensor() {
   setConversionRate(2);        // Set conversion rate to 4 Hz
-  setExtendedMode(false);      // Standard mode (-55°C to 128°C)
+  setExtendedMode(true);      // Standard mode (-55°C to 128°C)
   setAlertPolarity(true);      // Active HIGH alert
   setAlertMode(false);         // Comparator mode
   setFaultQueue(0);            // Trigger alert on first fault
@@ -61,8 +61,8 @@ float readTempC() {
   uint8_t msb = Wire.read();
   uint8_t lsb = Wire.read();
   
-  int16_t temp = (msb << 4) | (lsb >> 4);
-  if (temp & 0x800) temp |= 0xF000; // Handle negative temperatures
+  int temp = (msb << 5) | (lsb >> 3); // 13-bit mode (left-justified)
+  if (temp & 0x1000) temp |= 0xE000; // Sign extend negative numbers
   
   return temp * 0.0625;
 }

@@ -1,9 +1,13 @@
 #include <Wire.h>
 
+#include <SparkFun_I2C_Mux_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#SparkFun_I2C_Mux
+QWIICMUX myMux;
+
 #define TMP102_ADDRESS_1 0x48
 #define TMP102_ADDRESS_2 0x49
 #define TMP102_ADDRESS_3 0x4A
 #define TMP102_ADDRESS_4 0x4B
+
 #define TEMPERATURE_REGISTER 0x00
 #define CONFIG_REGISTER 0x01
 #define T_LOW_REGISTER 0x02
@@ -13,45 +17,64 @@
 void setup() {
   Serial.begin(9600);
   Wire.begin();
+
+
+  if (myMux.begin() == false)
+  {
+    Serial.println("Mux not detected. Freezing...");
+    while (1)
+      ;
+  }
+  //Serial.println("Mux detected");
+
+  myMux.setPort(0); //Connect master to port labeled '1' on the mux
+
+
   pinMode(ALERT_PIN, INPUT);
 
-  // Initialize sensors
-  if (!initializeTMP102(TMP102_ADDRESS_1)) {
+  // // Initialize sensors
+  // if (!initializeTMP102(TMP102_ADDRESS_1)) {
+  //   Serial.println("Cannot connect to " + String(TMP102_ADDRESS_1) + ". Check wiring and addresses.");
+  //   while (1);
+  // }
+  // if (!initializeTMP102(TMP102_ADDRESS_2)) {
+  //   Serial.println("Cannot connect to " + String(TMP102_ADDRESS_1) + ". Check wiring and addresses.");
+  //   while (1);
+  // }
+  if (!initializeTMP102(TMP102_ADDRESS_3)) {
     Serial.println("Cannot connect to " + String(TMP102_ADDRESS_1) + ". Check wiring and addresses.");
     while (1);
   }
-  if (!initializeTMP102(TMP102_ADDRESS_2)) {
-    Serial.println("Cannot connect to " + String(TMP102_ADDRESS_2) + ". Check wiring and addresses.");
+  if (!initializeTMP102(TMP102_ADDRESS_4)) {
+    Serial.println("Cannot connect to " + String(TMP102_ADDRESS_1) + ". Check wiring and addresses.");
     while (1);
   }
-  // if (!initializeTMP102(TMP102_ADDRESS_3)) {
-  //   Serial.println("Cannot connect to " + String(TMP102_ADDRESS_3) + ". Check wiring and addresses.");
-  //   while (1);
-  // }
-  // if (!initializeTMP102(TMP102_ADDRESS_4)) {
-  //   Serial.println("Cannot connect to " + String(TMP102_ADDRESS_4) + ". Check wiring and addresses.");
-  //   while (1);
-  // }
+  //myMux.setPort(1);
   // Configure both sensors
-  configureSensor(TMP102_ADDRESS_1);
-  configureSensor(TMP102_ADDRESS_2);
-  // configureSensor(TMP102_ADDRESS_3);
-  // configureSensor(TMP102_ADDRESS_4);
+  // configureSensor(TMP102_ADDRESS_1);
+  // configureSensor(TMP102_ADDRESS_2);
+  configureSensor(TMP102_ADDRESS_3);
+  configureSensor(TMP102_ADDRESS_4);
+  // if (!initializeTMP102(TMP102_ADDRESS_1)) {
+  // Serial.println("Cannot connect to " + String(TMP102_ADDRESS_1) + ". Check wiring and addresses.");
+  // while (1);
+  // }
+
+  // // Configure both sensors
+  // configureSensor(TMP102_ADDRESS_1);
 }
 unsigned long previousMillis = 0;
 void loop() {
-  float temperatureC1 = readTempC(TMP102_ADDRESS_1);
-  float temperatureF1 = temperatureC1 * 9.0 / 5.0 + 32.0;
-  
-  float temperatureC2 = readTempC(TMP102_ADDRESS_2);
-  float temperatureF2 = temperatureC2 * 9.0 / 5.0 + 32.0;
-  
-  float temperatureC3 = readTempC(TMP102_ADDRESS_3);
-  float temperatureF3 = temperatureC3 * 9.0 / 5.0 + 32.0;
-  
-  float temperatureC4 = readTempC(TMP102_ADDRESS_4);
-  float temperatureF4 = temperatureC4 * 9.0 / 5.0 + 32.0;
+  //myMux.setPort(2);
+  // float P1temperatureC1 = readTempC(TMP102_ADDRESS_1);
+  // float P1temperatureC2 = readTempC(TMP102_ADDRESS_2);
+  float P1temperatureC3 = readTempC(TMP102_ADDRESS_3);
+  float P1temperatureC4 = readTempC(TMP102_ADDRESS_4);
 
+  
+  // myMux.setPort(1);
+  // float P2temperatureC1 = readTempC(TMP102_ADDRESS_1);
+  // float P2temperatureF1 = P2temperatureC1 * 9.0 / 5.0 + 32.0;
   /*
   unsigned long currentMillis = millis();  // Capture the current time at the start of the loop
 
@@ -65,17 +88,17 @@ void loop() {
 
   // Update previousMillis to the current time for the next loop cycle
   previousMillis = currentMillis;
-  */
-  //Serial.print("1:");
-  Serial.print(temperatureF1);
+  // */
+  // Serial.print("P1:");
+  // Serial.print(P1temperatureC1);
+  // Serial.print("  P2:");
+  // Serial.print(P1temperatureC2);
+  Serial.print(P1temperatureC3);
   Serial.print(",");
-  Serial.println(temperatureF2);
-  // Serial.print("  3:");
-  // Serial.print(temperatureF3);
-  // Serial.print("  4:");
-  // Serial.println(temperatureF4);
-  
-  delay(100);
+  Serial.println(P1temperatureC4);
+  // Serial.print("    P2:");
+  // Serial.println(P2temperatureF1);
+  delay(500);
 }
 
 bool initializeTMP102(uint8_t address) {
@@ -85,7 +108,7 @@ bool initializeTMP102(uint8_t address) {
 
 void configureSensor(uint8_t address) {
   setConversionRate(address, 2);        // Set conversion rate to 4 Hz
-  setExtendedMode(address, false);      // Standard mode (-55°C to 128°C)
+  setExtendedMode(address, true);      // extended mode 
   setAlertPolarity(address, true);      // Active HIGH alert
   setAlertMode(address, false);         // Comparator mode
   setFaultQueue(address, 0);            // Trigger alert on first fault
@@ -102,8 +125,8 @@ float readTempC(uint8_t address) {
   uint8_t msb = Wire.read();
   uint8_t lsb = Wire.read();
   
-  int16_t temp = (msb << 4) | (lsb >> 4);
-  if (temp & 0x800) temp |= 0xF000; // Handle negative temperatures
+  int temp = (msb << 5) | (lsb >> 3); // 13-bit mode (left-justified)
+  if (temp & 0x1000) temp |= 0xE000; // Sign extend negative numbers
   
   return temp * 0.0625;
 }
