@@ -4,7 +4,7 @@ const uint8_t NUMBER_OF_MODULES = 3;
 uint16_t moduleMaxTemperature[NUMBER_OF_MODULES];
 uint16_t moduleAvgTemperature[NUMBER_OF_MODULES];
 uint16_t moduleMinTemperature[NUMBER_OF_MODULES];
-const uint8_t WINDOW_SIZE = 8; 
+const uint8_t WINDOW_SIZE = 8;
 uint8_t windowIndex = 0;
 //TCA9548A I2C Mux
 #include <SparkFun_I2C_Mux_Arduino_Library.h>  //Click here to get the library: http://librarymanager/All#SparkFun_I2C_Mux
@@ -30,16 +30,16 @@ const uint8_t NUMBER_OF_TMP_ADDRESSES = 4;
 //0-Not Connected
 //x>0-Module number
 const uint8_t connectedSensors[8][4] = {
-  { 1, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 0 }
+  { 1, 1, 1, 1 },
+  { 1, 1, 1, 1 },
+  { 1, 1, 1, 1 },
+  { 1, 1, 1, 1 },
+  { 1, 1, 1, 1 },
+  { 1, 1, 1, 1 },
+  { 1, 1, 1, 1 },
+  { 1, 1, 1, 1 }
 };
-uint16_t sensorValues[8][4][WINDOW_SIZE] = {0};
+float sensorValues[8][4] = { 0 };
 
 
 
@@ -58,11 +58,12 @@ void setup() {
     mux.setPort(i);
     for (int j = 0; j < NUMBER_OF_TMP_ADDRESSES; j++) {
       //sensorValues[i][j][0] = 0; //Initalize array;
-      if (connectedSensors[i][j]>0) {
+      if (connectedSensors[i][j] > 0) {
         configureSensor(TMP_ADDRESSES[j]);
         if (!initializeTMP112(TMP_ADDRESSES[j])) {
-        Serial.println("Cannot connect to mux port: "+ String(i) + " Address: " + String(TMP_ADDRESSES[j]));
-        while (1);
+          Serial.println("Cannot connect to mux port: " + String(i) + " Address: " + String(TMP_ADDRESSES[j]));
+          while (1)
+            ;
         }
       }
     }
@@ -74,12 +75,22 @@ void loop() {
   for (int i = 0; i < NUMBER_OF_MUX_PORTS; i++) {
     mux.setPort(i);
     for (int j = 0; j < NUMBER_OF_TMP_ADDRESSES; j++) {
-      if (connectedSensors[i][j]>0) {
+      if (connectedSensors[i][j] > 0) {
         sensorValues[i][j] = readTempC(TMP_ADDRESSES[j]);
       }
     }
   }
   //Process Data
+  for (int i = 0; i < 8; i++) {
+    for (int j = 0; j < 4; j++) {
+      Serial.print(sensorValues[i][j]);
+      Serial.print("\t");  // Tab space for formatting
+    }
+    Serial.println();  // New line after each row
+  }
+  delay(1000);
+  Serial.println();
+  Serial.println();
 }
 
 bool initializeTMP112(uint8_t address) {
@@ -88,13 +99,13 @@ bool initializeTMP112(uint8_t address) {
 }
 
 void configureSensor(uint8_t address) {
-  setConversionRate(address, 2);        // Set conversion rate to 4 Hz
-  setExtendedMode(address, false);      // Standard mode (-55°C to 128°C)
-  setAlertPolarity(address, true);      // Active HIGH alert
-  setAlertMode(address, false);         // Comparator mode
-  setFaultQueue(address, 0);            // Trigger alert on first fault
-  setHighTempF(address, 85.0);          // Set T_HIGH threshold to 85°F
-  setLowTempF(address, 84.0);           // Set T_LOW threshold to 84°F
+  setConversionRate(address, 2);    // Set conversion rate to 4 Hz
+  setExtendedMode(address, false);  // Standard mode (-55°C to 128°C)
+  setAlertPolarity(address, true);  // Active HIGH alert
+  setAlertMode(address, false);     // Comparator mode
+  setFaultQueue(address, 0);        // Trigger alert on first fault
+  setHighTempF(address, 85.0);      // Set T_HIGH threshold to 85°F
+  setLowTempF(address, 84.0);       // Set T_LOW threshold to 84°F
 }
 
 float readTempC(uint8_t address) {
@@ -105,10 +116,10 @@ float readTempC(uint8_t address) {
 
   uint8_t msb = Wire.read();
   uint8_t lsb = Wire.read();
-  
+
   int16_t temp = (msb << 4) | (lsb >> 4);
-  if (temp & 0x800) temp |= 0xF000; // Handle negative temperatures
-  
+  if (temp & 0x800) temp |= 0xF000;  // Handle negative temperatures
+
   return temp * 0.0625;
 }
 
@@ -124,7 +135,7 @@ void setTempRegister(uint8_t address, uint8_t reg, float temperatureC) {
   int16_t temp = temperatureC / 0.0625;
   uint8_t msb = (temp >> 4) & 0xFF;
   uint8_t lsb = (temp << 4) & 0xF0;
-  
+
   Wire.beginTransmission(address);
   Wire.write(reg);
   Wire.write(msb);
