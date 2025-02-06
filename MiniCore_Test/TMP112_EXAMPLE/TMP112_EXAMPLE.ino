@@ -22,7 +22,7 @@ void setup() {
   Wire1.begin(SLAVE_ADDRESS);
   Wire1.onReceive(receiveEvent); // Callback for data received
   Wire1.onRequest(requestEvent); // Callback for data requested
-  Serial.println("Slave I2C Initialized on TWI1");
+  Serial.println("Slave I2C Initialized");
   configureSensor();
 }
 

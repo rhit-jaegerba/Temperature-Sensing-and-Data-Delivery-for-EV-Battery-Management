@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <Wire1.h>
 
 const uint8_t NUMBER_OF_MODULES = 3;
 uint16_t moduleMaxTemperature[NUMBER_OF_MODULES];
@@ -23,7 +24,7 @@ const uint8_t NUMBER_OF_TMP_ADDRESSES = 4;
 #define T_LOW_REGISTER 0x02
 #define T_HIGH_REGISTER 0x03
 
-
+#define SLAVE_ADDRESS 0x20
 
 //Sensors connected to the system
 //presentSensors(Mux port 0-7, TMP_ADDRESSES 0-3)
@@ -68,6 +69,12 @@ void setup() {
       }
     }
   }
+
+  // Initialize the secondary I2C bus as a Slave
+  Wire1.begin(SLAVE_ADDRESS);
+  Wire1.onReceive(receiveEvent); // Callback for data received
+  Wire1.onRequest(requestEvent); // Callback for data requested
+  Serial.println("Slave I2C Initialized");
 }
 
 void loop() {
@@ -197,4 +204,20 @@ void writeConfigRegister(uint8_t address, uint16_t config) {
   Wire.write(config >> 8);
   Wire.write(config & 0xFF);
   Wire.endTransmission();
+}
+
+// Slave receive event
+void receiveEvent(int numBytes) {
+  Serial.print("Slave Received: ");
+  while (Wire1.available()) {
+    char c = Wire1.read();
+    Serial.print(c); // Print received byte
+  }
+  Serial.println();
+}
+
+// Slave request event
+void requestEvent() {
+  Serial.println("Here");
+  Wire1.write(1); // Send a response to the master
 }
