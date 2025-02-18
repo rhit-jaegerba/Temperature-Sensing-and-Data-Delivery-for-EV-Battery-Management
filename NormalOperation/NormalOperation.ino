@@ -5,8 +5,9 @@ const uint8_t NUMBER_OF_MODULES = 3;
 uint16_t moduleMaxTemperature[NUMBER_OF_MODULES];
 uint16_t moduleAvgTemperature[NUMBER_OF_MODULES];
 uint16_t moduleMinTemperature[NUMBER_OF_MODULES];
-const uint8_t WINDOW_SIZE = 8;
-uint8_t windowIndex = 0;
+const uint8_t WINDOW_SIZE = 8; //Size of the Floating Average Window
+const float WINDOW_TOLERANCE = 0.25; //Tolerance of the Floating Average Window
+
 //TCA9548A I2C Mux
 #include <SparkFun_I2C_Mux_Arduino_Library.h>  //Click here to get the library: http://librarymanager/All#SparkFun_I2C_Mux
 QWIICMUX mux;
@@ -32,7 +33,7 @@ const uint8_t NUMBER_OF_TMP_ADDRESSES = 4;
 //x>0-Module number
 const uint8_t connectedSensors[8][4] = {
   { 1, 1, 1, 1 },
-  { 1, 1, 1, 1 },
+  { 1, 1, 0, 0 },
   { 1, 1, 1, 1 },
   { 1, 1, 1, 1 },
   { 1, 1, 1, 1 },
@@ -40,9 +41,14 @@ const uint8_t connectedSensors[8][4] = {
   { 1, 1, 1, 1 },
   { 1, 1, 1, 1 }
 };
-float sensorValues[8][4] = { 0 };
 
+int16_t sensorValues[8][4]= { 0 }; //Holds the last calculated average for each sensor
 
+int16_t currentValues[WINDOW_SIZE];
+int16_t firstAverage = 0;
+int16_t secondAverage = 0;
+uint8_t averageCounter = 0;
+int16_t currentTemp = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -78,19 +84,41 @@ void setup() {
 }
 
 void loop() {
-  // collect sensor values
+  // collect sensor
+
   for (int i = 0; i < NUMBER_OF_MUX_PORTS; i++) {
     mux.setPort(i);
     for (int j = 0; j < NUMBER_OF_TMP_ADDRESSES; j++) {
-      if (connectedSensors[i][j] > 0) {
-        sensorValues[i][j] = readTempC(TMP_ADDRESSES[j]);
+        if (connectedSensors[i][j] > 0) {
+          for (int z = 0; z < WINDOW_SIZE; z++) {
+            currentTemp = readTemp(TMP_ADDRESSES[j]);
+            currentValues[z] = currentTemp;
+            firstAverage += currentTemp;
+          }
+          
+          firstAverage /= WINDOW_SIZE;
+
+          for (int y = 0; y < WINDOW_SIZE; y++) {
+            if (currentValues[y] < (firstAverage * (1 + WINDOW_TOLERANCE)) && currentValues[y] > (firstAverage * (1 - WINDOW_TOLERANCE))) {
+              secondAverage += currentValues[y];
+              averageCounter++;
+            }
+          }
+
+          secondAverage /= averageCounter;
+          sensorValues[i][j] = secondAverage;
+          firstAverage = 0;
+          secondAverage = 0;
+          averageCounter = 0;
       }
     }
   }
+  
+  
   //Process Data
   for (int i = 0; i < 8; i++) {
     for (int j = 0; j < 4; j++) {
-      Serial.print(sensorValues[i][j]);
+      Serial.print(sensorValues[i][j] * 0.0625);
       Serial.print("\t");  // Tab space for formatting
     }
     Serial.println();  // New line after each row
@@ -115,7 +143,7 @@ void configureSensor(uint8_t address) {
   setLowTempF(address, 84.0);       // Set T_LOW threshold to 84°F
 }
 
-float readTempC(uint8_t address) {
+int16_t readTemp(uint8_t address) {
   Wire.beginTransmission(address);
   Wire.write(TEMPERATURE_REGISTER);
   Wire.endTransmission();
@@ -127,7 +155,7 @@ float readTempC(uint8_t address) {
   int16_t temp = (msb << 4) | (lsb >> 4);
   if (temp & 0x800) temp |= 0xF000;  // Handle negative temperatures
 
-  return temp * 0.0625;
+  return temp;
 }
 
 void setHighTempF(uint8_t address, float temperatureF) {
@@ -206,18 +234,108 @@ void writeConfigRegister(uint8_t address, uint16_t config) {
   Wire.endTransmission();
 }
 
-// Slave receive event
+byte receivedByte;
+//Slave receive event
 void receiveEvent(int numBytes) {
-  Serial.print("Slave Received: ");
+  //Serial.print("Slave Received: ");
+  
+  if (numBytes == 0) return;
+  
+  receivedByte = 0;
   while (Wire1.available()) {
-    char c = Wire1.read();
-    Serial.print(c); // Print received byte
+    receivedByte = Wire1.read(); // Read the received byte
+    //Serial.println(receivedByte, HEX); // Print received byte in HEX format
   }
-  Serial.println();
 }
 
-// Slave request event
+
+//Slave request event
+uint8_t muxIndex = 0;
+uint16_t sensorIndex = 0;
+int16_t MinValue = 0xFD80;
+int16_t AvgValue = 0xFDD0;
+int16_t MaxValue = 0x07D0;
 void requestEvent() {
-  Serial.println("Here");
-  Wire1.write(1); // Send a response to the master
+  muxIndex = receivedByte>>4;
+  sensorIndex = receivedByte & 0b00001111;
+  Serial.print("muxIndex: ");
+  Serial.print(muxIndex);
+  Serial.print("        ");
+  Serial.print("sensorIndex: ");
+  Serial.println(sensorIndex);  
+  if((muxIndex<=7) && (sensorIndex<=3)){
+    Wire1.write(sensorValues[muxIndex][sensorIndex]>>8);
+    Wire1.write(sensorValues[muxIndex][sensorIndex]);
+  }
+  else{
+    switch (receivedByte) {
+      case 0x99:
+        MinValue = calculateModuleMin(0); //Replace argument with selected module
+        Wire1.write(MinValue>>8);
+        Wire1.write(MinValue);
+        break;
+      case 0xAA:
+        AvgValue = calculateModuleAverage(0); //Replace argument with selected module
+        Wire1.write(AvgValue>>8);
+        Wire1.write(AvgValue);
+        AvgValue += 60;
+        if(AvgValue >= (125*16)){
+          AvgValue = -40*16;
+        }
+        break;
+      case 0xBB:
+        MaxValue = calculateModuleMax(0); //Replace argument with selected module
+        Wire1.write(MaxValue>>8);
+        Wire1.write(MaxValue);
+        break;
+      default:
+        Serial.print("Default");
+        break;
+    }
+  }
+}
+
+int16_t calculateModuleMin(uint8_t module) {
+  int16_t max = 0;
+  for (int i = 0; i < NUMBER_OF_MUX_PORTS; i++) {
+    mux.setPort(i);
+    for (int j = 0; j < NUMBER_OF_TMP_ADDRESSES; j++) {
+        if (connectedSensors[i][j] == module && sensorValues[i][j] > max) {
+          max = sensorValues[i][j];
+        }
+
+  return max;
+  }
+}
+}
+
+int16_t calculateModuleMax(uint8_t module) {
+  int16_t min = 10000; //Larger than sensor will ever report
+  for (int i = 0; i < NUMBER_OF_MUX_PORTS; i++) {
+    mux.setPort(i);
+    for (int j = 0; j < NUMBER_OF_TMP_ADDRESSES; j++) {
+        if (connectedSensors[i][j] == module && sensorValues[i][j] < min) {
+          min = sensorValues[i][j];
+        }
+
+  return min;
+}
+}
+}
+
+int16_t calculateModuleAverage(uint8_t module) {
+  int8_t average = 0;
+  int16_t averageCounter = 0;
+  for (int i = 0; i < NUMBER_OF_MUX_PORTS; i++) {
+    mux.setPort(i);
+    for (int j = 0; j < NUMBER_OF_TMP_ADDRESSES; j++) {
+        if (connectedSensors[i][j] == module) {
+          average += sensorValues[i][j];
+          averageCounter++;
+        }
+
+  average /= averageCounter;
+  return average;
+}
+  }
 }
