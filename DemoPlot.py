@@ -41,9 +41,9 @@ def update(frame):
     global time_counter
 
     # Read data for each message
-    Min = read_from_slave(0x99)
-    Max = read_from_slave(0xBB)
-    Avg = read_from_slave(0xAA)
+    Min = read_from_slave(0xA0)
+    Max = read_from_slave(0xA2)
+    Avg = read_from_slave(0xA1)
 
     if Min is not None and Max is not None and Avg is not None:
         x_data.append(time_counter)
@@ -60,9 +60,9 @@ def update(frame):
             y_data_3.pop(0)
 
     ax.clear()
-    ax.plot(x_data, y_data_1, label="Sensors Min (0x99)", color='r')
-    ax.plot(x_data, y_data_2, label="Sensors Max (0xBB)", color='g')
-    ax.plot(x_data, y_data_3, label="Sensors Avg (0xAA)", color='b')
+    ax.plot(x_data, y_data_1, label="Sensors Min (0x80)", color='r')
+    ax.plot(x_data, y_data_2, label="Sensors Max (0x82)", color='g')
+    ax.plot(x_data, y_data_3, label="Sensors Avg (0x81)", color='b')
 
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Value")
