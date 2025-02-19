@@ -287,14 +287,14 @@ void requestEvent() {
     switch (command_low_nibble) {
       case 0:
         Serial.println("Default 0");
-        MinValue = calculateModuleMin(moduleIndex); //Replace argument with selected module
+        MinValue = calculateModuleMin(moduleIndex); 
         //MinValue = 0x07D0;
         Wire1.write(MinValue >> 8);
         Wire1.write(MinValue);
         break;
       case 1:
         Serial.println("Default 1");
-        AvgValue = calculateModuleAverage(moduleIndex); //Replace argument with selected module
+        AvgValue = calculateModuleAverage(moduleIndex); 
         AvgValue = 0x05D0;
         Wire1.write(AvgValue >> 8);
         Wire1.write(AvgValue);
@@ -305,7 +305,7 @@ void requestEvent() {
         break;
       case 2:
         Serial.println("Default 2");
-        MaxValue = calculateModuleMax(moduleIndex); //Replace argument with selected module
+        MaxValue = calculateModuleMax(moduleIndex); 
         //MaxValue = 0xFD80;
         Wire1.write(MaxValue >> 8);
         Wire1.write(MaxValue);
