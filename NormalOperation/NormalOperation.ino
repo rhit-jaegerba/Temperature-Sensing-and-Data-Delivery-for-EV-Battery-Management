@@ -116,15 +116,18 @@ void loop() {
 
 
   //Process Data
-  for (int i = 0; i < 8; i++) {
+/*  for (int i = 0; i < 8; i++) {
     for (int j = 0; j < 4; j++) {
       Serial.print(sensorValues[i][j] * 0.0625);
       Serial.print("\t");  // Tab space for formatting
     }
     Serial.println();  // New line after each row
-  }
+  } */
   delay(1000);
   Serial.println();
+  calculateModuleMin(1);
+  calculateModuleMax(1);
+  calculateModuleAverage(1);
   Serial.println();
 }
 
@@ -322,11 +325,12 @@ int16_t calculateModuleMax(uint8_t module) {
       if (connectedSensors[i][j] == module && sensorValues[i][j] > max) {
         max = sensorValues[i][j];
       }
-      Serial.print("max:");
-      Serial.println(max*0.0625);
-      return max;
+      
     }
   }
+  Serial.print("max:");
+  Serial.println(max*0.0625);
+  return max;
 }
 
 int16_t calculateModuleMin(uint8_t module) {
@@ -337,11 +341,12 @@ int16_t calculateModuleMin(uint8_t module) {
       if (connectedSensors[i][j] == module && sensorValues[i][j] < min) {
         min = sensorValues[i][j];
       }
-      Serial.print("min:");
-      Serial.println(min*0.0625);
-      return min;
+      
     }
   }
+  Serial.print("min:");
+  Serial.println(min*0.0625);
+  return min;
 }
 
 int16_t calculateModuleAverage(uint8_t module) {
@@ -355,10 +360,11 @@ int16_t calculateModuleAverage(uint8_t module) {
         averageCounter++;
       }
 
-      average /= averageCounter;
-      Serial.print("average:");
-      Serial.println(average*0.0625);      
-      return average;
+      
     }
   }
+  average /= averageCounter;   
+  Serial.print("average:");
+  Serial.println(average*0.0625);      
+  return average;
 }
