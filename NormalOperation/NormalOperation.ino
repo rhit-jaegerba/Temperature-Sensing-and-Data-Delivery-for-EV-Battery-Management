@@ -125,9 +125,9 @@ void loop() {
   } */
   delay(1000);
   Serial.println();
-  calculateModuleMin(1);
-  calculateModuleMax(1);
-  calculateModuleAverage(1);
+  //calculateModuleMin(2);
+  //calculateModuleMax(2);
+  //calculateModuleAverage(2);
   Serial.println();
 }
 
@@ -295,7 +295,7 @@ void requestEvent() {
       case 1:
         Serial.println("Default 1");
         AvgValue = calculateModuleAverage(moduleIndex); 
-        AvgValue = 0x05D0;
+        //AvgValue = 0x05D0;
         Wire1.write(AvgValue >> 8);
         Wire1.write(AvgValue);
         // AvgValue += 60;
@@ -364,6 +364,7 @@ int16_t calculateModuleAverage(uint8_t module) {
     }
   }
   average /= averageCounter;   
+  average = (int16_t) average;
   Serial.print("average:");
   Serial.println(average*0.0625);      
   return average;
