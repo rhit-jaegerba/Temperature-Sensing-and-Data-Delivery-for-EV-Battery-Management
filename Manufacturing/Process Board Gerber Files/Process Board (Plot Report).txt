@@ -1,0 +1,353 @@
+Plot Report
+-----------
+
+Report Written:     Wednesday, February 19, 2025
+Project Path:       C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board.prj
+Design Path:        C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board.pcb
+Design Title:       
+Created:            1/19/2025 3:18:48 PM
+Last Saved:         2/18/2025 1:24:20 PM
+Editing Time:       731 min
+Units:              mil (precision 2)
+
+
+Device Settings
+===============
+
+
+Gerber Settings
+===============
+
+    Leading zero suppression.
+    G01 assumed throughout.
+    Line termination <*> <CR> <LF>.
+    3.5 format absolute inches.
+    Format commands defined in Gerber file.
+    Aperture table defined in Gerber file.
+    Hardware arcs allowed.
+
+
+Drill Settings
+==============
+
+    Excellon Format 2
+    Format 3.5 absolute in mm.
+    Zero suppression Leading
+
+
+
+Plots Output
+============
+
+    Plot Job: "C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board.mop"
+
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - Top Silkscreen.gbr
+
+    Layers:
+    ------------------
+    Top Silkscreen
+
+    D-Code Shape  (thou)
+    -----------------------
+    D16    Round 11.81
+    D20    Round 1.97
+    D21    Round 3.94
+    D73    Round 5.00
+    D74    Round 7.87
+    D75    Round 9.84
+    D124   Round 3.00
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - Top Copper.gbr
+
+    Layers:
+    --------------
+    Top Copper
+
+    D-Code Shape  (thou)
+    -----------------------------------------------
+    D16    Round 11.81
+    D18    Round 8.00
+    D19    Round 32.00
+    D70    Round 66.00
+    D71    Round 141.73
+    D77    Rectangle 23.62 X 47.24
+    D78    Rectangle 23.62 X 47.24  Rotation 90
+    D79    Rectangle 11.81 X 31.50  Rotation 90
+    D80    Rectangle 11.81 X 31.50
+    D81    Square 110.24
+    D82    Rectangle 47.24 X 125.98
+    D83    Rectangle 66.93 X 208.66
+    D84    Rectangle 23.62 X 24.41  Rotation 90
+    D85    Rectangle 39.76 X 71.65
+    D86    Rectangle 23.62 X 49.21  Rotation 90
+    D87    Rectangle 17.72 X 23.62  Rotation 90
+    D88    Rectangle 62.99 X 125.98
+    D89    Rectangle 23.62 X 24.41
+    D90    Rectangle 23.62 X 49.21
+    D91    Rectangle 17.72 X 23.62
+    D92    Rectangle 37.40 X 110.24
+    D93    Rectangle 95.00 X 135.00  Rotation 90
+    D94    Rectangle 18.70 X 19.69  Rotation 90
+    D95    Rectangle 18.70 X 19.69
+    D96    Rectangle 43.31 X 78.74
+    D97    Square 31.50
+    D125   Rectangle 47.24 X 125.98  Rotation 90
+    D126   Rectangle 66.93 X 208.66  Rotation 90
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - Top Solder Mask.gbr
+
+    Layers:
+    -------------------
+    Top Solder Mask
+
+    D-Code Shape  (thou)
+    ------------------------------------------------
+    D23    Round 38.00
+    D24    Round 72.00
+    D25    Round 147.73
+    D99    Rectangle 29.62 X 53.24
+    D100   Rectangle 29.62 X 53.24  Rotation 90
+    D101   Rectangle 17.81 X 37.50  Rotation 90
+    D102   Rectangle 17.81 X 37.50
+    D103   Square 116.24
+    D104   Rectangle 53.24 X 131.98
+    D105   Rectangle 72.93 X 214.66
+    D106   Rectangle 29.62 X 30.41  Rotation 90
+    D107   Rectangle 45.76 X 77.65
+    D108   Rectangle 29.62 X 55.21  Rotation 90
+    D109   Rectangle 23.72 X 29.62  Rotation 90
+    D110   Rectangle 68.99 X 131.98
+    D111   Rectangle 29.62 X 30.41
+    D112   Rectangle 29.62 X 55.21
+    D113   Rectangle 23.72 X 29.62
+    D114   Rectangle 43.40 X 116.24
+    D115   Rectangle 101.00 X 141.00  Rotation 90
+    D116   Rectangle 24.70 X 25.69  Rotation 90
+    D117   Rectangle 24.70 X 25.69
+    D118   Rectangle 49.31 X 84.74
+    D119   Square 37.50
+    D127   Rectangle 53.24 X 131.98  Rotation 90
+    D128   Rectangle 72.93 X 214.66  Rotation 90
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - Top Paste Mask.gbr
+
+    Layers:
+    ------------------
+    Top Paste Mask
+
+    D-Code Shape  (thou)
+    -----------------------------------------------
+    D120   Rectangle 37.31 X 72.74
+    D121   Square 25.50
+    D129   Rectangle 41.24 X 119.98  Rotation 90
+    D130   Rectangle 60.93 X 202.66  Rotation 90
+    D150   Rectangle 17.62 X 41.24
+    D151   Rectangle 17.62 X 41.24  Rotation 90
+    D152   Rectangle 5.81 X 25.50  Rotation 90
+    D153   Rectangle 5.81 X 25.50
+    D154   Square 104.24
+    D155   Rectangle 41.24 X 119.98
+    D156   Rectangle 60.93 X 202.66
+    D157   Rectangle 17.62 X 18.41  Rotation 90
+    D158   Rectangle 33.76 X 65.65
+    D159   Rectangle 17.62 X 43.21  Rotation 90
+    D160   Rectangle 11.72 X 17.62  Rotation 90
+    D161   Rectangle 56.99 X 119.98
+    D162   Rectangle 17.62 X 18.41
+    D163   Rectangle 17.62 X 43.21
+    D164   Rectangle 11.72 X 17.62
+    D165   Rectangle 31.40 X 104.24
+    D166   Rectangle 89.00 X 129.00  Rotation 90
+    D167   Rectangle 12.70 X 13.69  Rotation 90
+    D168   Rectangle 12.70 X 13.69
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - GND Plane (Power Plane).gbr
+
+    Layers:
+    -----------------------------------------------------------------------------------
+    GND Plane  - Plane Isolation Gap 10.00 Thermal Connect Width 10.00 with 4 Spokes
+
+    D-Code Shape  (thou)
+    -----------------------------------------
+    D12    Round 46.00
+    D13    Round 80.00
+    D14    Round 66.00  Thermal Relief Pad
+    D15    Round 155.73
+    D131   Round 32.00  Thermal Relief Pad
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - V3.3 Plane (Power Plane).gbr
+
+    Layers:
+    ------------------------------------------------------------------------------------
+    V3.3 Plane  - Plane Isolation Gap 10.00 Thermal Connect Width 10.00 with 4 Spokes
+
+    D-Code Shape  (thou)
+    -----------------------------------------
+    D12    Round 46.00
+    D13    Round 80.00
+    D15    Round 155.73
+    D131   Round 32.00  Thermal Relief Pad
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - Bottom Copper.gbr
+
+    Layers:
+    -----------------
+    Bottom Copper
+
+    D-Code Shape  (thou)
+    -----------------------
+    D10    Round 11.81
+    D11    Round 32.00
+    D12    Round 8.00
+    D13    Round 66.00
+    D14    Round 141.73
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - Bottom Documentation.gbr
+
+    Layers:
+    ------------------------
+    Bottom Documentation
+
+    D-Code Shape  (thou)
+    -----------------------
+    D15    Round 1.97
+    D16    Round 3.94
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - Bottom Solder Mask.gbr
+
+    Layers:
+    ----------------------
+    Bottom Solder Mask
+
+    D-Code Shape  (thou)
+    -----------------------
+    D17    Round 38.00
+    D18    Round 72.00
+    D19    Round 147.73
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - Bottom Paste Mask.gbr
+
+    Layers:
+    ---------------------
+    Bottom Paste Mask
+
+    D-Code Shape  (thou)
+    -----------------------
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - Gerber Drill Data - [Through Hole].gbr
+
+    Layers:
+    ------------------
+    [Through Hole]
+
+    D-Code Shape  (thou)
+    -----------------------
+    D70    Round 16.00
+    D71    Round 40.00
+    D20    Round 129.92
+
+NC Drill Output
+===============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - NC Drill Data - [Through Hole].drl
+
+    Output:
+    ---------------------------
+    Plated Round Drill Holes
+    Plated Slots
+
+    Tool  Size           Count   ID
+    --------------------------------------
+    T001  0.01600 inches 118   Z
+    T002  0.04000 inches 33    J
+    T003  0.12992 inches 9     AA
+    --------------------------------------
+    Total                160
+    --------------------------------------
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - NC Drill Data - [Through Hole] (Unplated).drl
+
+    Output:
+    -----------------------------
+    Unplated Round Drill Holes
+    Unplated Slots
+
+    Tool  Size Count   ID
+    ----------------------------
+    ----------------------------
+    Total      0
+    ----------------------------
+
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - Drill Ident Drawing - [Through Hole].gbr
+
+    Layers:
+    ------------------
+    [Through Hole]
+
+
+Drill Ident Drawing
+===================
+
+    Drill Plated Size Shape ID
+    -----------------------------------
+    40    Y      100  Round J
+    16    Y      100  Round Z
+    130   Y      100  Round AA
+
+    D-Code Shape  (thou)
+    -----------------------
+    D21    Round 100.00
+    D22    Round 5.00
+
+Gerber Output
+=============
+
+C:\Users\mccaindm\OneDrive - Rose-Hulman Institute of Technology\Senior Des\Process Board PCB\Process Board\Process Board - Board Outline.gbr
+
+    Layers:
+    ------------------
+    Board Outlines
+
+    D-Code Shape  (thou)
+    -----------------------
+    D22    Round 5.00
+
+End Of Report.
