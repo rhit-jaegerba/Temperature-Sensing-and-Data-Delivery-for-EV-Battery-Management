@@ -4,7 +4,7 @@ This repository contains the codebase for **Temperature Sensing and Data Deliver
 
 ## Authors
 - Beckett Jaeger  
-- Ryan Siedel  
+- Ryan Seidel  
 - Alex Herzog  
 - Dylan McCain  
 
