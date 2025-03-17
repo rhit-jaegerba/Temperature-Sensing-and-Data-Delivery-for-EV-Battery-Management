@@ -14,7 +14,7 @@ This repository contains the codebase for **Temperature Sensing and Data Deliver
 
 ## Clients
 - Greg Romas  
-- Marc Hernitor  
+- Marc Herniter  
 - **BWC Team**:  
   - Jack Martin  
   - Jasper Halford  
